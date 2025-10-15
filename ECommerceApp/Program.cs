@@ -3,6 +3,9 @@ using DomainLayer.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Persistance.Data;
 using Persistance.Data.DataSeed;
+using Persistance.Repositories;
+using Service;
+using ServiceAbstraction;
 using System.Threading.Tasks;
 
 namespace ECommerceApp
@@ -24,6 +27,11 @@ namespace ECommerceApp
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
             builder.Services.AddScoped<IDataSeeding, DataSeeding>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddAutoMapper(x => x.AddProfile(new MappingProfiles()));
+            builder.Services.AddTransient<PictureURLResolver>();
+
+            builder.Services.AddScoped<IServiceManager, ServiceManager>();
             #endregion
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -46,6 +54,7 @@ namespace ECommerceApp
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseAuthorization();
 
